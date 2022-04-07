@@ -60,4 +60,6 @@ public final class Constants {
     // Wheel size for drive in Feet (6 inches).
     public final static double wheelDiameterFeet = .5f;
 
+	// time for teleop during a match in seconds (2:15)
+	public final static int telopTime = 135;
 }

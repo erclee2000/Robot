@@ -8,6 +8,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
+import java.util.Map;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
@@ -18,7 +24,10 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-
+  private final Timer m_timer = new Timer();
+  private ShuffleboardTab matchTimeTab = Shuffleboard.getTab("Match Time Remaining");
+  private NetworkTableEntry teleopTime = matchTimeTab.add("Match Time Remaining", Constants.telopTime).withSize(4,4).withPosition(0,0)
+  .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("Min", 0, "Max", 135, "Show", true)).getEntry();
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -77,11 +86,15 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    m_timer.reset();
+    m_timer.start();
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    teleopTime.setDouble(Constants.telopTime - (int)m_timer.get());
+  }
 
   @Override
   public void testInit() {
